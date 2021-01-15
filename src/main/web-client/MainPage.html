@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo application</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+</head>
+
+<body class="container text-center">
+    <div class="display-4 m-5">Press F12 to open the console 🙂</div>
+
+    <div id="HelloMessage" class="m-5"></div>
+    <div id="Driver" class="m-5"></div>
+</body>
+</html>
+
+<script>
+    const doGetRequest = () => {
+      console.log("doGetRequest with XMLHttpRequest...");
+
+      const request = new XMLHttpRequest();
+      const url='http://localhost:8080';
+      request.open("GET", url);
+      request.send();
+
+      request.onreadystatechange = (e) => {
+        if (request.readyState === XMLHttpRequest.DONE) {
+          const message = request.responseText;
+          console.log("GET: " + message);
+          document.getElementById("HelloMessage").innerHTML = "GET result:<br>" + message;
+        }
+      }
+    }
+
+    const doPostRequest = async () => {
+      console.log("doPostRequest with fetch...");
+
+      const body = {
+        "car": "Ferrari"
+      }
+      const url = "http://localhost:8080/driver";
+      const promise = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body),
+        //mode: 'cors', // no-cors, cors, same-origin
+      });
+
+      promise.json().then(driver => {
+        const driverString = JSON.stringify(driver)
+        console.log("POST:" + driverString);
+
+        document.getElementById("HelloMessage").innerHTML = "POST result: <br>" + driverString;
+      });
+    }
+
+    // execute at startup
+    doGetRequest();
+    doPostRequest();
+</script>
